@@ -1,5 +1,8 @@
 fastapi
 uvicorn
 pymupdf
+python-docx
+pandas
+openpyxl
 google-genai
 python-multipart

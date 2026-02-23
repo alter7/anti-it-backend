@@ -6,12 +6,12 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI(title="Anti-IT Audit API")
 
-# Root route to satisfy Render's health checks (prevents 404 noise)
+# Root route for Render health checks
 @app.get("/")
 async def root():
     return {"status": "active", "service": "Anti-IT Audit"}
 
-# Initialize the modern Client
+# Initialize the 2026 SDK Client
 API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     raise ValueError("Critical Error: GEMINI_API_KEY is missing")
@@ -34,15 +34,15 @@ async def run_audit(
         raise HTTPException(status_code=400, detail="Only PDF files accepted.")
 
     try:
-        # Extract text
+        # Extract text from PDF
         file_bytes = await file.read()
         doc = fitz.open(stream=file_bytes, filetype="pdf")
         proposal_text = "".join(page.get_text() for page in doc)
         
         if len(proposal_text.strip()) < 50:
-            raise HTTPException(status_code=400, detail="PDF is empty or non-readable (scanned image).")
+            raise HTTPException(status_code=400, detail="PDF is empty or non-readable.")
 
-        # New SDK call syntax
+        # Modern SDK syntax
         response = client.models.generate_content(
             model='gemini-1.5-flash',
             contents=f"{SYSTEM_PROMPT}\n\nCONTEXT:\n{business_context}\n\nESTIMATE TEXT:\n{proposal_text}"
@@ -51,5 +51,4 @@ async def run_audit(
         return JSONResponse(content={"status": "success", "audit": response.text})
         
     except Exception as e:
-        # Detailed error reporting for the 2026 SDK
         return JSONResponse(status_code=500, content={"error": "Audit failed", "details": str(e)})

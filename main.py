@@ -11,7 +11,7 @@ if not API_KEY:
     raise ValueError("Critical Error: GEMINI_API_KEY is not set")
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('models/gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 SYSTEM_PROMPT = """
 Role: You are a Senior CTO and an independent IT audit expert. Your specialization is detecting fraud, padded estimates, and over-engineering in software development proposals.
